@@ -1,8 +1,19 @@
-const gameBoard = (() => {
-    let board = [];
-    const canvas = document.querySelector('canvas');
-    const ctx = canvas.getContext('2d');
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
+let board = [[], [], []];
 
+const winningBoard = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
+
+const gameBoard = (() => {
     const drawBoard = () => {
         ctx.beginPath();
         ctx.moveTo(100, 0);
@@ -18,6 +29,8 @@ const gameBoard = (() => {
     };
 
     const drawX = (i, j) => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
         if (j == 0 && i != 0)  {
             ctx.beginPath();
             ctx.moveTo(`${i}25`, 25);
@@ -54,6 +67,8 @@ const gameBoard = (() => {
     };
 
     const drawO = (i, j) => {
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 2;
         if(j == 0 && i != 0) {
             ctx.beginPath();
             ctx.arc(`${i}50`, 50, 25, 0, Math.PI * 2)
@@ -77,10 +92,54 @@ const gameBoard = (() => {
         }
     };
 
+    const winnerLine = (iStart,jStart, iEnd, jEnd) => {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(iStart, jStart);
+        ctx.lineTo(iEnd, jEnd);
+        ctx.stroke();
+        ctx.closePath();
+    };
+
+    const convertCoordinates = (coordinates) => {
+        let i = Math.floor((coordinates.clientX - canvas.getBoundingClientRect().x) / 100); 
+        let j = Math.floor((coordinates.clientY - canvas.getBoundingClientRect().y) / 100);
+
+        return [i, j]
+    }
+
+    const valueExists = (i, j) => {
+        return board[j][i];
+    }
+    
+    const checkForWinner = (board) => {
+        let convertedBoard = convertBoardTo1D(board);
+        for (let i = 0; i < winningBoard.length; i++) {
+            for (let j = 0; j < winningBoard.length; j++) {
+                
+            }
+        }
+
+    };
+
+    const convertBoardTo1D = (board) => {
+        let convertedBoard = [];
+        for (let i = 0; i < board.length; i++) {
+            convertedBoard = convertedBoard.concat(board[i])
+        }
+        return convertedBoard;
+    }
+
+
     return {
         drawBoard,
         drawX,
         drawO,
+        winnerLine,
+        convertCoordinates,
+        valueExists,
+        checkForWinner,
     }
 
 })();
@@ -91,6 +150,39 @@ const displayController = (() => {
 
 const player = (name, marker) => {
 
+    return {
+        name,
+        marker,
+    };
 };
 
 gameBoard.drawBoard();
+
+const jake = player("Jake", "X");
+const pc = player("PC", "O")
+
+let currentPlayer = jake
+
+
+canvas.addEventListener('click', (location) => {
+    
+    let i = gameBoard.convertCoordinates(location)[0];
+    let j = gameBoard.convertCoordinates(location)[1];
+
+    if (currentPlayer.marker == "X") {
+        if (gameBoard.valueExists(i,j)) return;
+        gameBoard.drawX(i,j);
+        board[j][i] = "X";
+        gameBoard.checkForWinner(board);
+        console.log(board);
+        currentPlayer = pc;
+    } else if (currentPlayer.marker == "O") {
+        if (gameBoard.valueExists(i,j)) return;
+        gameBoard.drawO(i,j);
+        board[j][i] = "O";
+        gameBoard.checkForWinner(board);
+        console.log(board);
+        currentPlayer = jake;
+    }
+
+})
