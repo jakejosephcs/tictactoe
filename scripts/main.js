@@ -1,6 +1,6 @@
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
-let board = [[], [], []];
+let board = [["", "", ""], ["", "", ""], ["", "", ""]];
 
 const winningBoard = [
     [0, 1, 2],
@@ -113,14 +113,17 @@ const gameBoard = (() => {
         return board[j][i];
     }
     
-    const checkForWinner = (board) => {
+    const checkForWinner = (board, player) => {
         let convertedBoard = convertBoardTo1D(board);
+        let winner;
         for (let i = 0; i < winningBoard.length; i++) {
-            for (let j = 0; j < winningBoard.length; j++) {
-                
+            winner = true;
+            for (let j = 0; j < winningBoard[i].length; j++) {
+                winner = convertedBoard[winningBoard[i][j]] == player.marker && winner;
             }
+            if (winner) return winner;
         }
-
+        return winner;
     };
 
     const convertBoardTo1D = (board) => {
@@ -131,6 +134,10 @@ const gameBoard = (() => {
         return convertedBoard;
     }
 
+    const checkForTie = (board) => {
+        
+    
+    }
 
     return {
         drawBoard,
@@ -140,12 +147,27 @@ const gameBoard = (() => {
         convertCoordinates,
         valueExists,
         checkForWinner,
+        checkForTie,
     }
 
 })();
 
 const displayController = (() => {
 
+    const showGameWinner = (player) => {
+        alert(`${player.name} has WON!`);
+        location.reload(); 
+    };
+
+    const showTie = () => {
+        alert("It's a TIE!");
+        location.reload(); 
+    };
+
+    return {
+        showGameWinner,
+        showTie
+    }
 })();
 
 const player = (name, marker) => {
@@ -173,16 +195,18 @@ canvas.addEventListener('click', (location) => {
         if (gameBoard.valueExists(i,j)) return;
         gameBoard.drawX(i,j);
         board[j][i] = "X";
-        gameBoard.checkForWinner(board);
-        console.log(board);
-        currentPlayer = pc;
+        let tie = gameBoard.checkForTie(board);
+        if (tie) displayController.showTie();
+        let winner = gameBoard.checkForWinner(board, currentPlayer);
+        winner ? displayController.showGameWinner(currentPlayer) : currentPlayer = pc
     } else if (currentPlayer.marker == "O") {
         if (gameBoard.valueExists(i,j)) return;
         gameBoard.drawO(i,j);
         board[j][i] = "O";
-        gameBoard.checkForWinner(board);
-        console.log(board);
-        currentPlayer = jake;
+        let tie = gameBoard.checkForTie(board);
+        if (tie) displayController.showTie();
+        let winner = gameBoard.checkForWinner(board, currentPlayer);
+        winner ? displayController.showGameWinner(currentPlayer) : currentPlayer = jake;
     }
 
 })
