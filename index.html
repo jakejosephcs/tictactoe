@@ -3,12 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
     <title>Tic Tac Toe</title>
 </head>
 <body>
+
+    <div class="game-start">
+        <h1>Choose a NAME and a MARKER</h1>
+        <div class="choice player-one form-group">
+            <input type="text" placeholder="NAME" class="form-control">
+            <select name="choices" id="player-one-select">
+                <option value="X">X</option>
+                <option value="O">O</option>
+            </select>
+        </div>
+        <div class="choice player-two form-group">
+            <input type="text" placeholder="NAME" class="form-control">
+            <select name="choices" id="player-two-select">
+                <option value="O">O</option>
+                <option value="X">X</option>
+            </select>
+        </div>
+        <button class="start-game btn btn-primary">START</button>
+    </div>
+    
     <div class="game-board">
         <canvas width="300px" height="300px">
             Sorry, your browser doesn't supper the canvas element :(

@@ -153,8 +153,9 @@ const gameBoard = (() => {
 })();
 
 const displayController = (() => {
-    let header = document.querySelector('h1');
+    let header = document.querySelector('.game-over > h1');
     let gameOverContainer = document.querySelector('.game-over');
+    let startGameContainer = document.querySelector('.game-start')
 
     const showGameWinner = (player) => {
         gameOverContainer.classList.toggle('hide');
@@ -163,12 +164,17 @@ const displayController = (() => {
 
     const showTie = () => {
         gameOverContainer.classList.toggle('hide');
-        header.textContent = `It's a TIE`;
+        header.textContent = `It's a TIE!`;
     };
+
+    const startGame = () => {
+        startGameContainer.classList.toggle('hide')
+    }
 
     return {
         showGameWinner,
-        showTie
+        showTie,
+        startGame,
     }
 })();
 
@@ -182,12 +188,35 @@ const player = (name, marker) => {
 
 gameBoard.drawBoard();
 
-const jake = player("Jake", "X");
-const pc = player("PC", "O");
+let currentPlayer;
+let playerOne;
+let playerTwo;
 
-let currentPlayer = jake;
+// EVENT: Starting the game
+document.querySelector('.start-game').addEventListener('click', () => {
+    let playerOneName = document.querySelector('.player-one > input').value;
+    let playerTwoName = document.querySelector('.player-two > input').value;
+    
+    let playerOneMarker = document.querySelector('#player-one-select').value;
+    let playerTwoMarker = document.querySelector('#player-two-select').value;
+
+    if (playerOneName == "" || playerTwoName == "") {
+        alert("Please fill out a name");
+    } else if (playerOneMarker == playerTwoMarker) {
+        alert("Please choose either X or O, not both.")
+    } else {
+        playerOne = player(playerOneName, playerOneMarker);
+        playerTwo = player(playerTwoName, playerTwoMarker);
+
+        currentPlayer = playerOne
+
+        displayController.startGame();
+    }
+})
 
 
+
+// EVENT: Placing marker on the game board
 canvas.addEventListener('click', (location) => {
     
     let i = gameBoard.convertCoordinates(location)[0];
@@ -206,7 +235,7 @@ canvas.addEventListener('click', (location) => {
             } else if (tie) {
                 displayController.showTie()
             } else {
-                currentPlayer = pc;
+                currentPlayer.marker == playerOne.marker ? currentPlayer = playerTwo : currentPlayer = playerOne;
             }
         };
 
@@ -223,7 +252,7 @@ canvas.addEventListener('click', (location) => {
             } else if (tie) {
                 displayController.showTie()
             } else {
-                currentPlayer = jake;
+                currentPlayer.marker == playerOne.marker ? currentPlayer = playerTwo : currentPlayer = playerOne;
             }
         }
     }
